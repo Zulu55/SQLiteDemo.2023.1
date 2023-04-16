@@ -1,27 +1,28 @@
 ﻿using Bogus;
+using PropertyChanged;
 using SQLiteDemo.MVVM.Models;
 using System.Windows.Input;
 
 namespace SQLiteDemo.MVVM.ViewModels
 {
+    [AddINotifyPropertyChangedInterface]
     public class MainPageViewModel
     {
         public MainPageViewModel()
         {
             GenerateNewCustomer();
-            AddOrUpdateCommand = new Command(() =>
-            {
-                App.CustomerRepo.AddOrUpdate(CurrentCustomer);
-                Console.WriteLine(App.CustomerRepo.StatusMessage);
-                GenerateNewCustomer();
-            });
         }
 
         public List<Customer> Customers { get; set; }
 
         public Customer CurrentCustomer { get; set; }
 
-        public ICommand AddOrUpdateCommand { get; set; }
+        public ICommand AddOrUpdateCommand => new Command(() =>
+        {
+            App.CustomerRepo.AddOrUpdate(CurrentCustomer);
+            Console.WriteLine(App.CustomerRepo.StatusMessage);
+            GenerateNewCustomer();
+        });
 
         private void GenerateNewCustomer()
         {
