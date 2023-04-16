@@ -6,9 +6,9 @@ namespace SQLiteDemo
     {
         private const string dbFileName = "SQLite.db3";
 
-        public const SQLiteOpenFlags flags = SQLiteOpenFlags.ReadWrite |
-                                              SQLiteOpenFlags.Create |
-                                              SQLiteOpenFlags.SharedCache;
+        public const SQLiteOpenFlags Flags = SQLiteOpenFlags.ReadWrite |
+                                             SQLiteOpenFlags.Create |
+                                             SQLiteOpenFlags.SharedCache;
 
         public static string DatabasePath => Path.Combine(FileSystem.AppDataDirectory, dbFileName);
 

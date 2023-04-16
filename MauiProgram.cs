@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SQLiteDemo.Repository;
 
 namespace SQLiteDemo;
 
@@ -19,6 +20,7 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
+		builder.Services.AddSingleton<CustomerRepository>();
 		return builder.Build();
 	}
 }

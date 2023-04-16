@@ -1,6 +1,5 @@
 ﻿using SQLite;
 using SQLiteDemo.MVVM.Models;
-using static SQLite.SQLite3;
 
 namespace SQLiteDemo.Repository
 {
@@ -16,12 +15,21 @@ namespace SQLiteDemo.Repository
 
         public string StatusMessage { get; set; }
 
-        public void Add<T>(T model)
+        public void AddOrUpdate(Customer customer)
         {
             try
             {
-                int result = _connection.Insert(model);
-                StatusMessage = $"{result} row(s) added.";
+                int result = 0;
+                if (customer.Id == 0)
+                {
+                    result = _connection.Insert(customer);
+                    StatusMessage = $"{result} row(s) added.";
+                }
+                else 
+                {
+                    result = _connection.Update(customer);
+                    StatusMessage = $"{result} row(s) updated.";
+                }
             }
             catch (Exception ex)
             {
@@ -33,12 +41,51 @@ namespace SQLiteDemo.Repository
         {
             try
             {
-
+                return _connection.Table<Customer>().ToList();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                StatusMessage = $"Error {ex.Message}.";
+                return null;
+            }
+        }
 
-                throw;
+        public List<Customer> GetAll2()
+        {
+            try
+            {
+                return _connection.Query<Customer>("SELECT * FROM Customers").ToList();
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error {ex.Message}.";
+                return null;
+            }
+        }
+
+        public Customer Get(int id)
+        {
+            try
+            {
+                return _connection.Table<Customer>().FirstOrDefault(c => c.Id == id);
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error {ex.Message}.";
+                return null;
+            }
+        }
+
+        public void Delete(int id)
+        {
+            try
+            {
+                var customer = Get(id);
+                _connection.Delete(customer);
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error {ex.Message}.";
             }
         }
     }
