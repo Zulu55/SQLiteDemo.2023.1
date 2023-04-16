@@ -1,4 +1,5 @@
-﻿using SQLiteDemo.Repository;
+﻿using SQLiteDemo.MVVM.Views;
+using SQLiteDemo.Repository;
 
 namespace SQLiteDemo;
 
@@ -10,6 +11,6 @@ public partial class App : Application
 	{
 		InitializeComponent();
 		CustomerRepo = repo;
-		MainPage = new AppShell();
+		MainPage = new NavigationPage(new MainPage());
 	}
 }
