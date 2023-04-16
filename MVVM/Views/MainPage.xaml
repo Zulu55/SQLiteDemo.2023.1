@@ -20,7 +20,17 @@
         <CollectionView 
             ItemsSource="{Binding Customers}"
             Grid.Row="1">
-            
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,*">
+                        <Label 
+                            Text="{Binding Name}"/>
+                        <Label 
+                            Grid.Column="1"
+                            Text="{Binding Address}"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
         </CollectionView>
     </Grid>
 </ContentPage>

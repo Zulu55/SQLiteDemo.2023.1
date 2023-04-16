@@ -10,6 +10,7 @@ namespace SQLiteDemo.MVVM.ViewModels
     {
         public MainPageViewModel()
         {
+            Refresh();
             GenerateNewCustomer();
         }
 
@@ -22,6 +23,7 @@ namespace SQLiteDemo.MVVM.ViewModels
             App.CustomerRepo.AddOrUpdate(CurrentCustomer);
             Console.WriteLine(App.CustomerRepo.StatusMessage);
             GenerateNewCustomer();
+            Refresh();
         });
 
         private void GenerateNewCustomer()
@@ -30,6 +32,11 @@ namespace SQLiteDemo.MVVM.ViewModels
                 .RuleFor(x => x.Name, f => f.Person.FullName)
                 .RuleFor(x => x.Address, f => f.Person.Address.Street)
                 .Generate();
+        }
+
+        private void Refresh()
+        {
+            Customers = App.CustomerRepo.GetAll();
         }
     }
 }
