@@ -1,36 +1,26 @@
 ﻿using SQLite;
-using SQLiteDemo.MVVM.Models;
+using SQLiteDemo.Abstractions;
 using System.Linq.Expressions;
 
 namespace SQLiteDemo.Repository
 {
-    public class CustomerRepository
+    public class BaseRepository<T> : IBaseRepository<T> where T : TableData, new()
     {
         private readonly SQLiteConnection _connection;
 
-        public CustomerRepository()
+        public BaseRepository()
         {
             _connection = new SQLiteConnection(Constants.DatabasePath, Constants.Flags);
-            _connection.CreateTable<Customer>();
+            _connection.CreateTable<T>();
         }
 
         public string StatusMessage { get; set; }
 
-        public void AddOrUpdate(Customer customer)
+        public void DeleteItem(T item)
         {
             try
             {
-                int result = 0;
-                if (customer.Id == 0)
-                {
-                    result = _connection.Insert(customer);
-                    StatusMessage = $"{result} row(s) added.";
-                }
-                else 
-                {
-                    result = _connection.Update(customer);
-                    StatusMessage = $"{result} row(s) updated.";
-                }
+                _connection.Delete(item);
             }
             catch (Exception ex)
             {
@@ -38,11 +28,16 @@ namespace SQLiteDemo.Repository
             }
         }
 
-        public List<Customer> GetAll()
+        public void Dispose()
+        {
+            _connection.Close();
+        }
+
+        public T GetItem(int id)
         {
             try
             {
-                return _connection.Table<Customer>().ToList();
+                return _connection.Table<T>().FirstOrDefault(c => c.Id == id);
             }
             catch (Exception ex)
             {
@@ -51,11 +46,39 @@ namespace SQLiteDemo.Repository
             }
         }
 
-        public List<Customer> GetAll(Expression<Func<Customer, bool>> predicate)
+        public T GetItem(Expression<Func<T, bool>> predicate)
         {
             try
             {
-                return _connection.Table<Customer>()
+                return _connection.Table<T>()
+                    .Where(predicate)
+                    .FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error {ex.Message}.";
+                return null;
+            }
+        }
+
+        public List<T> GetItems()
+        {
+            try
+            {
+                return _connection.Table<T>().ToList();
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error {ex.Message}.";
+                return null;
+            }
+        }
+
+        public List<T> GetItems(Expression<Func<T, bool>> predicate)
+        {
+            try
+            {
+                return _connection.Table<T>()
                     .Where(predicate)
                     .ToList();
             }
@@ -66,38 +89,21 @@ namespace SQLiteDemo.Repository
             }
         }
 
-        public List<Customer> GetAll2()
+        public void SaveItem(T item)
         {
             try
             {
-                return _connection.Query<Customer>("SELECT * FROM Customers").ToList();
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = $"Error {ex.Message}.";
-                return null;
-            }
-        }
-
-        public Customer Get(int id)
-        {
-            try
-            {
-                return _connection.Table<Customer>().FirstOrDefault(c => c.Id == id);
-            }
-            catch (Exception ex)
-            {
-                StatusMessage = $"Error {ex.Message}.";
-                return null;
-            }
-        }
-
-        public void Delete(int id)
-        {
-            try
-            {
-                var customer = Get(id);
-                _connection.Delete(customer);
+                int result = 0;
+                if (item.Id == 0)
+                {
+                    result = _connection.Insert(item);
+                    StatusMessage = $"{result} row(s) added.";
+                }
+                else
+                {
+                    result = _connection.Update(item);
+                    StatusMessage = $"{result} row(s) updated.";
+                }
             }
             catch (Exception ex)
             {
