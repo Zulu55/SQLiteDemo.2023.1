@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SQLiteDemo.MVVM.ViewModels"
              x:Class="SQLiteDemo.MVVM.Views.MainPage"
              Title="MainPage">
     <Grid 
@@ -19,16 +20,32 @@
         </VerticalStackLayout>
         <CollectionView 
             ItemsSource="{Binding Customers}"
+            SelectionMode="Single"
+            SelectedItem="{Binding CurrentCustomer}"
             Grid.Row="1">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="*,*">
-                        <Label 
-                            Text="{Binding Name}"/>
-                        <Label 
-                            Grid.Column="1"
-                            Text="{Binding Address}"/>
-                    </Grid>
+                    <SwipeView>
+                        <SwipeView.LeftItems>
+                            <SwipeItems>
+                                <SwipeItem
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPageViewModel}}, Path=DeleteCommand}"
+                                    Text="Delete"
+                                    BackgroundColor="Purple"/>
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        <VerticalStackLayout 
+                            HeightRequest="30"
+                            Margin="0,0,0,5">
+                            <Grid ColumnDefinitions="*,*">
+                                <Label 
+                                    Text="{Binding Name}"/>
+                                <Label 
+                                    Grid.Column="1"
+                                    Text="{Binding Address}"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

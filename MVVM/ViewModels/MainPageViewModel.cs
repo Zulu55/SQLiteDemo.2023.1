@@ -26,6 +26,12 @@ namespace SQLiteDemo.MVVM.ViewModels
             Refresh();
         });
 
+        public ICommand DeleteCommand => new Command(() =>
+        {
+            App.CustomerRepo.Delete(CurrentCustomer.Id);
+            Refresh();
+        });
+
         private void GenerateNewCustomer()
         {
             CurrentCustomer = new Faker<Customer>()
@@ -36,7 +42,8 @@ namespace SQLiteDemo.MVVM.ViewModels
 
         private void Refresh()
         {
-            Customers = App.CustomerRepo.GetAll();
+            //Customers = App.CustomerRepo.GetAll();
+            Customers = App.CustomerRepo.GetAll(x => x.Name.StartsWith("A"));
         }
     }
 }
